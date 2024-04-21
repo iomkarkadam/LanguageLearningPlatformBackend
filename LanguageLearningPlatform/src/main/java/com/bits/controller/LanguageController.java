@@ -19,31 +19,28 @@ public class LanguageController {
     @Autowired
     private LanguageService languageService;
 
-    @GetMapping
+    @GetMapping("/get-supported-languages")
     public ResponseEntity<List<LanguageDTO>> getSupportedLanguages() {
         List<LanguageDTO> languages = languageService.getSupportedLanguages();
         return ResponseEntity.ok(languages);
     }
-
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<LanguageDTO>> getLanguagesByUserId(@PathVariable Long userId) {
-        List<LanguageDTO> languages = languageService.getLanguagesByUserId(userId);
-        return ResponseEntity.ok(languages);
-    }
-
-    @PostMapping("/user/{userId}")
+    @PostMapping("/update-languages-for-user/{userId}")
     public ResponseEntity<?> updateLanguagesForUser(@PathVariable Long userId, @RequestBody List<Long> languageIds) {
         languageService.updateLanguagesForUser(userId, languageIds);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/user/{userId}/proficiency-level/{languageId}")
+    @GetMapping("/get-languages-by-user-id/{userId}")
+    public ResponseEntity<List<LanguageDTO>> getLanguagesByUserId(@PathVariable Long userId) {
+        List<LanguageDTO> languages = languageService.getLanguagesByUserId(userId);
+        return ResponseEntity.ok(languages);
+    }
+    @GetMapping("/get-proficiency-level/{userId}/proficiency-level/{languageId}")
     public ResponseEntity<Integer> getProficiencyLevel(@PathVariable Long userId, @PathVariable Long languageId) {
         int proficiencyLevel = languageService.getProficiencyLevel(userId, languageId);
         return ResponseEntity.ok(proficiencyLevel);
     }
 
-    @PostMapping("/user/{userId}/proficiency-level/{languageId}")
+    @PostMapping("/update-proficiency-level/{userId}/proficiency-level/{languageId}")
     public ResponseEntity<?> updateProficiencyLevel(@PathVariable Long userId, @PathVariable Long languageId, @RequestParam int proficiencyLevel) {
         languageService.updateProficiencyLevel(userId, languageId, proficiencyLevel);
         return ResponseEntity.ok().build();

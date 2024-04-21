@@ -20,6 +20,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    EmailServiceImpl emailService;
+
     public static final String SECRET_KEY = "LanguageLearningPlatform";
 
     @Override
@@ -28,13 +31,15 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(userRegistrationDto.getPassword());
         userRepository.save(user);
+        sendEmailOnRegistration(userRegistrationDto.getEmail());
     }
 
     @Override
     public String loginUser(UserLoginDto userLoginDto) {
 
         List<User> users = userRepository.findByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword());
-               if (!CollectionUtils.isEmpty(users)) {
+        if (!CollectionUtils.isEmpty(users)) {
+            sendEmailOnLogin(userLoginDto.getEmail());
             return generateToken(users.get(0));
         } else {
             return null;
@@ -48,5 +53,31 @@ public class UserServiceImpl implements UserService {
                 setIssuedAt(new Date(timestamp)).setExpiration(new Date(timestamp + 10 * 60 * 1000))
                 .claim("userId", user.getId()).claim("emailId", user.getEmail()).compact();
         return token;
+    }
+
+    private void sendEmailOnRegistration(String userEmail) {
+        String body = "Dear user,\n" +
+                "\n" +
+                "Welcome to our application! We're excited to have you on board.\n" +
+                "Thank you for registering with us.\n" +
+                "\n" +
+                "Best regards,\n" +
+                "The LanguageLearningPlatform Application Team";
+        emailService.sendEmail(userEmail, "Welcome to language Learning Platform!", body);
+    }
+
+    private void sendEmailOnLogin(String userEmail) {
+        String body = "Dear Learner,\n" +
+                "\n" +
+                "You have successfully logged on 'Language Learning Platform' application.\n" +
+                "If you suspect any unusual account activity, please contact us immediately.\n" +
+                "If you want to report this as fraud, please call 9999999999 or 1111111111 from India or 8888888888 from overseas.\n" +
+                "\n" +
+                "\n" +
+                "Yours sincerely,\n" +
+                "Language Learning Platform-India\n" +
+                "\n" +
+                "(This is a system generated communication and hence please do not reply to this email)";
+        emailService.sendEmail(userEmail, "Login Alert-language Learning Platform!", body);
     }
 }

@@ -5,7 +5,6 @@ import lombok.Data;
 
 @Entity
 @Table(name = "user_languages")
-@Data
 public class UserLanguage {
 
     @Id
@@ -23,6 +22,35 @@ public class UserLanguage {
     @Column(nullable = false)
     private int proficiencyLevel;
 
+    public User getUser() {
+        return user;
+    }
 
-    // Getters and setters
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Language getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(Language language) {
+        this.language = language;
+    }
+
+    public int getProficiencyLevel() {
+        return proficiencyLevel;
+    }
+
+    public void setProficiencyLevel(int proficiencyLevel) {
+        this.proficiencyLevel = proficiencyLevel;
+    }
 }

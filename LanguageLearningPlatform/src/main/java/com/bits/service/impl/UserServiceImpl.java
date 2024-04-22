@@ -31,7 +31,7 @@ public class UserServiceImpl implements UserService {
         user.setEmail(userRegistrationDto.getEmail());
         user.setPassword(userRegistrationDto.getPassword());
         userRepository.save(user);
-        sendEmailOnRegistration(userRegistrationDto.getEmail());
+        //sendEmailOnRegistration(userRegistrationDto.getEmail());
     }
 
     @Override
@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
 
         List<User> users = userRepository.findByEmailAndPassword(userLoginDto.getEmail(), userLoginDto.getPassword());
         if (!CollectionUtils.isEmpty(users)) {
-            sendEmailOnLogin(userLoginDto.getEmail());
+            //sendEmailOnLogin(userLoginDto.getEmail());
             return generateToken(users.get(0));
         } else {
             return null;

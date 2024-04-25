@@ -5,6 +5,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 public class UserRegistrationDto {
+
     @NotBlank(message = "name is required")
     @Size(min = 2, message = "name must be at least 8 characters long")
     private String name;

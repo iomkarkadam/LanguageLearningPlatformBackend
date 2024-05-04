@@ -1,8 +1,11 @@
 package com.bits.controller;
 import com.bits.dto.RefreshTokenRequest;
+import com.bits.dto.ResponseDTO;
 import com.bits.dto.UserLoginDto;
 import com.bits.dto.UserRegistrationDto;
 import com.bits.service.UserService;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -27,7 +30,10 @@ public class UserController {
         }
         // Delegate registration logic to userService
         userService.registerUser(registrationDto);
-        return new ResponseEntity<>("User registered successfully",HttpStatus.CREATED);
+        ResponseDTO responseDTO= new ResponseDTO();
+        responseDTO.setMessage("successfully registered");
+        responseDTO.setStatus("200");
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
 
     @PostMapping("/login")

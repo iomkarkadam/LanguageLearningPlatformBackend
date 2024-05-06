@@ -1,15 +1,18 @@
 package com.bits.service.impl;
 
 import com.bits.dto.LanguageDTO;
+import com.bits.dto.UserLanguageDTO;
 import com.bits.model.Language;
 import com.bits.model.User;
 import com.bits.model.UserLanguage;
 import com.bits.repository.LanguageRepositiory;
 import com.bits.repository.UserLanguageRepository;
+import com.bits.repository.UserRepository;
 import com.bits.service.LanguageService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,6 +25,9 @@ public class LanguageServiceImpl implements LanguageService {
 
     @Autowired
     private UserLanguageRepository userLanguageRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     @Override
     public List<LanguageDTO> getSupportedLanguages() {
@@ -36,21 +42,19 @@ public class LanguageServiceImpl implements LanguageService {
     }
 
     @Override
-    public void updateLanguagesForUser(Long userId, List<Long> languageIds) {
+    public void updateLanguagesForUser(UserLanguageDTO userLanguageDTO) {
+        User user0 = userRepository.findByEmail(userLanguageDTO.getUserEmail());
         User user = new User();
-        user.setId(userId);
+        user.setId(user0.getId());
         userLanguageRepository.deleteByUser(user);
-        List<UserLanguage> userLanguages = languageIds.stream()
-                .map(languageId -> {
-                    UserLanguage userLanguage = new UserLanguage();
-                    userLanguage.setUser(user);
-                    Language language = new Language();
-                    language.setId(languageId);
-                    userLanguage.setLanguage(language);
-                    return userLanguage;
-                })
-                .collect(Collectors.toList());
-        userLanguageRepository.saveAll(userLanguages);
+
+        UserLanguage userLanguage = new UserLanguage();
+        userLanguage.setUser(user);
+        Language language = new Language();
+        language.setId(userLanguageDTO.getLanguageId());
+        userLanguage.setLanguage(language);
+
+        userLanguageRepository.save(userLanguage);
     }
 
     @Override

@@ -1,9 +1,12 @@
 package com.bits.controller;
 
 import com.bits.dto.LanguageDTO;
+import com.bits.dto.ResponseDTO;
+import com.bits.dto.UserLanguageDTO;
 import com.bits.model.Language;
 import com.bits.service.LanguageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,16 +28,22 @@ public class LanguageController {
         List<LanguageDTO> languages = languageService.getSupportedLanguages();
         return ResponseEntity.ok(languages);
     }
-    @PostMapping("/update-languages-for-user/{userId}")
-    public ResponseEntity<?> updateLanguagesForUser(@PathVariable Long userId, @RequestBody List<Long> languageIds) {
-        languageService.updateLanguagesForUser(userId, languageIds);
-        return ResponseEntity.ok().build();
+
+    @PostMapping("/update-languages-for-user")
+    public ResponseEntity<?> updateLanguagesForUser(@RequestBody UserLanguageDTO userLanguageDTO) {
+        languageService.updateLanguagesForUser(userLanguageDTO);
+        ResponseDTO responseDTO = new ResponseDTO();
+        responseDTO.setMessage("language updated for user");
+        responseDTO.setStatus("200");
+        return new ResponseEntity<>(responseDTO, HttpStatus.OK);
     }
+
     @GetMapping("/get-languages-by-user-id/{userId}")
     public ResponseEntity<List<LanguageDTO>> getLanguagesByUserId(@PathVariable Long userId) {
         List<LanguageDTO> languages = languageService.getLanguagesByUserId(userId);
         return ResponseEntity.ok(languages);
     }
+
     @GetMapping("/get-proficiency-level/{userId}/proficiency-level/{languageId}")
     public ResponseEntity<Integer> getProficiencyLevel(@PathVariable Long userId, @PathVariable Long languageId) {
         int proficiencyLevel = languageService.getProficiencyLevel(userId, languageId);

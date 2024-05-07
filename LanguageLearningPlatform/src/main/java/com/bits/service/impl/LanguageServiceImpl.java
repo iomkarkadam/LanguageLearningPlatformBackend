@@ -9,6 +9,7 @@ import com.bits.repository.LanguageRepositiory;
 import com.bits.repository.UserLanguageRepository;
 import com.bits.repository.UserRepository;
 import com.bits.service.LanguageService;
+import org.springframework.transaction.annotation.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,19 +43,27 @@ public class LanguageServiceImpl implements LanguageService {
     }
 
     @Override
+    @Transactional
     public void updateLanguagesForUser(UserLanguageDTO userLanguageDTO) {
-        User user0 = userRepository.findByEmail(userLanguageDTO.getUserEmail());
-        User user = new User();
-        user.setId(user0.getId());
-        userLanguageRepository.deleteByUser(user);
+        User user = userRepository.findByEmail(userLanguageDTO.getUserEmail());
 
-        UserLanguage userLanguage = new UserLanguage();
-        userLanguage.setUser(user);
-        Language language = new Language();
-        language.setId(userLanguageDTO.getLanguageId());
-        userLanguage.setLanguage(language);
+        // Check if user exists before proceeding
+        if (user != null) {
+            // Delete existing user languages
+            userLanguageRepository.deleteByUser(user);
 
-        userLanguageRepository.save(userLanguage);
+            // Create new user language entry
+            UserLanguage userLanguage = new UserLanguage();
+            userLanguage.setUser(user);
+
+            Language language = new Language();
+            language.setId(userLanguageDTO.getLanguageId());
+            userLanguage.setLanguage(language);
+
+            userLanguageRepository.save(userLanguage);
+        } else {
+            throw new IllegalArgumentException("User not found for email: " + userLanguageDTO.getUserEmail());
+        }
     }
 
     @Override
